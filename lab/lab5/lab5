@@ -34,31 +34,26 @@
     <hr>
     <label><input type="checkbox" id="wmsToggle" checked> Show WMS Layer</label>
   </div>
-
   <div id="map"></div>
-
-  <script type="module">
-    import Map from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/Map.js";
-    import View from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/View.js";
-    import TileLayer from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/layer/Tile.js";
-    import OSM from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/source/OSM.js";
-    import XYZ from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/source/XYZ.js";
-    import TileWMS from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/source/TileWMS.js";
-    import { fromLonLat } from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/proj.js";
-
+<script type="module">
+  import Map from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/Map.js";
+  import View from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/View.js";
+  import TileLayer from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/layer/Tile.js";
+  import OSM from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/source/OSM.js";
+  import XYZ from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/source/XYZ.js";
+  import TileWMS from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/source/TileWMS.js";
+  import { fromLonLat } from "https://cdn.jsdelivr.net/npm/ol@v9.2.4/proj.js";
     // Base layers
     const osmLayer = new TileLayer({
       source: new OSM(),
       visible: true
     });
-
     const esriLayer = new TileLayer({
       source: new XYZ({
         url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
       }),
       visible: false
     });
-
     // WMS layer
     const wmsLayer = new TileLayer({
       source: new TileWMS({
@@ -73,7 +68,6 @@
       }),
       visible: true
     });
-
     // Map
     const map = new Map({
       target: "map",
@@ -83,7 +77,6 @@
         zoom: 4
       })
     });
-
     // Switch basemap
     document.querySelectorAll('input[name="basemap"]').forEach(radio => {
       radio.addEventListener("change", () => {
@@ -91,7 +84,6 @@
         esriLayer.setVisible(radio.value === "esri");
       });
     });
-
     // Toggle WMS layer
     document.getElementById("wmsToggle").addEventListener("change", e => {
       wmsLayer.setVisible(e.target.checked);
