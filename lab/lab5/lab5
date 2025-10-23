@@ -1,1 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>OpenLayers Map Switcher</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    #map { width: 100%; height: 90vh; }
+    .controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <h4>Basemap:</h4>
+    <label><input type="radio" name="basemap" value="osm" checked> OSM</label><br>
+    <label><input type="radio" name="basemap" value="esri"> ESRI Imagery</label>
+    <hr>
+    <label><input type="checkbox" id="wmsToggle" checked> Show WMS Layer</label>
+  </div>
+  <div id="map" class="map"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+  <script>
+    // Base layers
+    const osmLayer = new ol.layer.Tile({
+      source: new ol.source.OSM(),
+      visible: true
+    });
+
+    const esriLayer = new ol.layer.Tile({
+      source: new ol.source.XYZ({
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+      }),
+      visible: false
+    });
+
+    // WMS Layer
+    const wmsLayer = new ol.layer.Tile({
+      source: new ol.source.TileWMS({
+        url: 'https://ahocevar.com/geoserver/wms',
+        params: {
+          'LAYERS': 'topp:states',
+          'TILED': true,
+          'FORMAT': 'image/png'
+        },
+        serverType: 'geoserver',
+        crossOrigin: 'anonymous'
+      }),
+      visible: true
+    });
+
+    // Map setup
+    const map = new ol.Map({
+      target: 'map',
+      layers: [osmLayer, esriLayer, wmsLayer],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([-98.583, 39.833]), // center on continental US
+        zoom: 4
+      })
+    });
+
+    // Basemap switcher
+    document.querySelectorAll('input[name="basemap"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const value = radio.value;
+        osmLayer.setVisible(value === 'osm');
+        esriLayer.setVisible(value === 'esri');
+      });
+    });
+
+    // WMS toggle
+    document.getElementById('wmsToggle').addEventListener('change', (e) => {
+      wmsLayer.setVisible(e.target.checked);
+    });
+  </script>
+</body>
+</html>
 
