@@ -1,88 +1,74 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Lab3: Web-based Mapping Using OpenLayers</title>
-<script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
-</head>
-<body>
-<h3>Lab3: Web-based Mapping Using OpenLayers</h3>
-<h4>Author: Sophia Gerz-Escandón</h4>
-<div id="map" class="map", style = "width:800px; height: 600px"></div>
-<script>
-var OSM = new ol.layer.Tile({
-source: new ol.source.OSM()
-});
-var map = new ol.Map({
-layers: [OSM],
-target: 'map',
-view: new ol.View({
-projection: 'EPSG:3857',
-center: [-10997148, 4569099],
-zoom: 4
-})
-});
-</body>
-<head>
-<meta charset="utf-8" />
-<title>Lab3: Web-based Mapping Using OpenLayers</title>
-<script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-
-layerswitcher.css" />
-<script src="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.js"></script> 
-</head>
-<div id="map" class="map" style="width:800px; height:600px"></div>
-<script>
-// OSM
-var OSM = new ol.layer.Tile({
-title: 'OSM',
-type: 'base',
-visible: false,
-source: new ol.source.OSM()
-});
-// Azure Maps Road
-var AZURE_KEY =
-'6srLl2o3dGC8xAqJVrOEtVGTFj1ujl40lKOoKJD6f1K3XLS2U5JAJQQJ99BIACYeBjFZ86DdAAAgAZMP4fGn';
-var azureRoad = new ol.layer.Tile({
-title: 'Azure Maps (Road)',
-type: 'base',
-visible: true,
-source: new ol.source.XYZ({
-url:
-'https://atlas.microsoft.com/map/tile?api-version=2022-08-01' +
-'&tilesetId=microsoft.base.road&zoom={z}&x={x}&y={y}' +
-'&subscription-key=' + AZURE_KEY,
-crossOrigin: 'anonymous'
-})
-});
-var wms = new ol.layer.Tile({
-title: 'States',
-source: new ol.source.TileWMS({
-url: 'https://ahocevar.com/geoserver/wms',
-params: {
-'LAYERS': 'topp:states',
-'TILED': true,
-'FORMAT': 'image/png',
-'TRANSPARENT': true
-},
-serverType: 'geoserver',
-transition: 0
-})
-});
-var baseGroup = new ol.layer.Group({
-title: 'Base maps',
-layers: [azureRoad, OSM]
-});
-var map = new ol.Map({
-target: 'map',
-layers: [baseGroup, wms],
-view: new ol.View({
-center: [-10997148, 4569099],
-zoom: 4
-})
-});
-map.addControl(new ol.control.LayerSwitcher({ tipLabel: 'Legend' }));
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lab 3 Web GIS Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.js"></script>
+    <style>
+      .map {
+        width: 100%;
+        max-width: 900px;
+        height: 600px;
+        border: 1px solid #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Lab 3 Web GIS Map</h3>
+    <h4>Author: Sophia Gerz-Escandón</h4>
+    <div id="map" class="map"></div>
+    <script>
+      // Base Layer (OSM)
+      var osm = new ol.layer.Tile({
+        title: 'OpenStreetMap',
+        type: 'base',
+        visible: true,
+        source: new ol.source.OSM()
+      });
+      var AZURE_KEY = '89F72x2UiHfGdjPAyeZyPPqCjPj86ftyQ3xuLyrYbOuJFv8HPfcDJQQJ99BJACYeBjFNMnj2AAAgAZMPqF4Y';
+      var azureRoad = new ol.layer.Tile({
+        title: 'Azure Maps (Road)',
+        type: 'base',
+        visible: false,
+        source: new ol.source.XYZ({
+          url:
+            'https://atlas.microsoft.com/map/tile?api-version=2022-08-01' +
+            '&tilesetId=microsoft.base.road&zoom={z}&x={x}&y={y}' +
+            '&subscription-key=' + AZURE_KEY,
+          crossOrigin: 'anonymous'
+        })
+      });
+      var wmsStates = new ol.layer.Tile({
+        title: 'US States Overlay (WMS)',
+        visible: true,
+        source: new ol.source.TileWMS({
+          url: 'https://ahocevar.com/geoserver/wms',
+          params: {
+            'LAYERS': 'topp:states',
+            'TILED': true,
+            'FORMAT': 'image/png',
+            'TRANSPARENT': true
+          },
+          serverType: 'geoserver',
+          transition: 0
+        })
+      });
+      var baseGroup = new ol.layer.Group({
+        title: 'Base Maps',
+        layers: [azureRoad, osm]
+      });
+      var map = new ol.Map({
+        target: 'map',
+        layers: [baseGroup, wmsStates],
+        view: new ol.View({
+          center: [-10997148, 4569099], // USA center
+          zoom: 4
+        })
+      });
+      map.addControl(new ol.control.LayerSwitcher({ tipLabel: 'Layers' }));
+    </script>
+  </body>
 </html>
