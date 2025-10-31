@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lab 3 - Question 4: Tasmania Web GIS</title>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.js"></script>
+    <style>
+      .map {
+        width: 100%;
+        max-width: 900px;
+        height: 600px;
+        border: 1px solid #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Lab 3 - Question 4: Tasmania Web GIS</h3>
+    <h4>Author: Sophia Gerz-Escandón</h4>
+    <div id="map" class="map"></div>
+    <script>
+      var AZURE_KEY = '89F72x2UiHfGdjPAyeZyPPqCjPj86ftyQ3xuLyrYbOuJFv8HPfcDJQQJ99BJACYeBjFNMnj2AAAgAZMPqF4Y';
+      function azureTile(title, tilesetId, visible) {
+        return new ol.layer.Tile({
+          title: title,
+          type: 'base',
+          visible: visible,
+          source: new ol.source.XYZ({
+            url:
+              'https://atlas.microsoft.com/map/tile?api-version=2022-08-01' +
+              '&tilesetId=' + tilesetId + 
+              '&zoom={z}&x={x}&y={y}' +
+              '&subscription-key=' + AZURE_KEY,
+            crossOrigin: 'anonymous'
+          })
+        });
+      }
+      var azureRoad = azureTile('Azure Road', 'microsoft.base.road', true);
+      var osm = new ol.layer.Tile({ title:'OpenStreetMap', type:'base', visible:false, source:new ol.source.OSM() });
+      var baseGroup = new ol.layer.Group({ title:'Base Maps', layers:[azureRoad, osm] });
+      var wmsUrl = 'https://data.stategrowth.tas.gov.au/geoserver/ows';
+      var carriageways = new ol.layer.Tile({
+        title: 'Tasmania Roads (GEO_CARRIAGEWAY)',
+        visible: true,
+        source: new ol.source.TileWMS({
+          url: wmsUrl,
+          params: { 'LAYERS': 'topp:ssg:GEO_CARRIAGEWAY', 'TILED': true, 'FORMAT': 'image/png', 'TRANSPARENT': true },
+          serverType: 'geoserver'
+        })
+      });
+      var cadastre = new ol.layer.Tile({
+        title: 'Cadastre Parcels (GEO_CADASTRE)',
+        visible: true,
+        source: new ol.source.TileWMS({
+          url: wmsUrl,
+          params: { 'LAYERS': 'topp:pam:GEO_CADASTRE', 'TILED': true, 'FORMAT': 'image/png', 'TRANSPARENT': true },
+          serverType: 'geoserver'
+        })
+      });
+      var busTrips = new ol.layer.Tile({
+        title: 'Bus Trips (GEO_BRM_TRIP)',
+        visible: true,
+        source: new ol.source.TileWMS({
+          url: wmsUrl,
+          params: { 'LAYERS': 'topp:ssg:GEO_BRM_TRIP', 'TILED': true, 'FORMAT': 'image/png', 'TRANSPARENT': true },
+          serverType: 'geoserver'
+        })
+      });
+      var map = new ol.Map({
+        target: 'map',
+        layers: [baseGroup, carriageways, cadastre, busTrips],
+        view: new ol.View({
+          projection: 'EPSG:3857',
+          center: ol.proj.fromLonLat([146.9, -42.0]), // Tasmania center
+          zoom: 7
+        })
+      });
+      var tasExtent4326 = [144.5, -43.7, 148.5, -40.5];
+      var tasExtent3857 = ol.proj.transformExtent(tasExtent4326, 'EPSG:4326', 'EPSG:3857');
+      map.getView().fit(tasExtent3857, { size: map.getSize(), padding: [30,30,30,30], duration: 300 });
+      map.addControl(new ol.control.LayerSwitcher({ tipLabel:'Toggle Layers' }));
+    </script>
+  </body>
+</html>
+
