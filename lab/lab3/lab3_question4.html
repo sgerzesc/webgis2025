@@ -1,1 +1,58 @@
-
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lab 3 - Question 3: North Carolina WMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.js"></script>
+    <style>
+      .map { width: 100%; max-width: 900px; height: 600px; border: 1px solid #333; }
+    </style>
+  </head>
+  <body>
+    <h3>Lab 3 - Question 3: North Carolina with WMS Overlay</h3>
+    <h4>Author: Sophia Gerz-Escandón</h4>
+    <div id="map" class="map"></div>
+    <script>
+      var AZURE_KEY = '89F72x2UiHfGdjPAyeZyPPqCjPj86ftyQ3xuLyrYbOuJFv8HPfcDJQQJ99BJACYeBjFNMnj2AAAgAZMPqF4Y';
+      function azureTile(title, tilesetId, visible) {
+        return new ol.layer.Tile({
+          title: title, type: 'base', visible: visible,
+          source: new ol.source.XYZ({
+            url: 'https://atlas.microsoft.com/map/tile?api-version=2022-08-01&tilesetId='
+                + tilesetId + '&zoom={z}&x={x}&y={y}&subscription-key=' + AZURE_KEY,
+            crossOrigin: 'anonymous'
+          })
+        });
+      }
+      var azureRoad = azureTile('Azure Road', 'microsoft.base.road', true);
+      var azureDark = azureTile('Azure Dark Grey', 'microsoft.base.darkgrey', false);
+      var osm = new ol.layer.Tile({ title:'OpenStreetMap', type:'base', visible:false, source: new ol.source.OSM() });
+      var baseGroup = new ol.layer.Group({ title:'Base Maps', layers:[azureRoad, azureDark, osm] });
+      var wmsStates = new ol.layer.Tile({
+        title: 'US States Overlay (WMS)',
+        visible: true,
+        source: new ol.source.TileWMS({
+          url: 'https://ahocevar.com/geoserver/wms',
+          params: { LAYERS:'topp:states', TILED:true, FORMAT:'image/png', TRANSPARENT:true },
+          serverType: 'geoserver', transition: 0
+        })
+      });
+      var map = new ol.Map({
+        target: 'map',
+        layers: [baseGroup, wmsStates],
+        view: new ol.View({
+          projection: 'EPSG:3857',
+          center: ol.proj.fromLonLat([-79.0193, 35.7596]),
+          zoom: 6
+        })
+      });
+      var ncExtent4326 = [-84.3219, 33.8429, -75.4606, 36.5881];
+      var ncExtent3857 = ol.proj.transformExtent(ncExtent4326, 'EPSG:4326','EPSG:3857');
+      map.getView().fit(ncExtent3857, { size: map.getSize(), padding:[30,30,30,30], duration:300 });
+      map.addControl(new ol.control.LayerSwitcher({ tipLabel:'Switch Basemap' }));
+    </script>
+  </body>
+</html>
