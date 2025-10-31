@@ -1,1 +1,43 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lab 3 Q1 - North Carolina OSM</title>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
+    <style>
+      .map {
+        width: 100%;
+        max-width: 900px;
+        height: 600px;
+        border: 1px solid #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Lab 3 - Question 1: North Carolina</h3>
+    <h4>Author: Sophia Gerz-Escandón</h4>
+    <div id="map" class="map"></div>
+    <script>
+      var osm = new ol.layer.Tile({
+        source: new ol.source.OSM()
+      });
+      var map = new ol.Map({
+        target: 'map',
+        layers: [osm],
+        view: new ol.View({
+          projection: 'EPSG:3857',
+          center: ol.proj.fromLonLat([-79.0193, 35.7596]), // NC center
+          zoom: 6
+        })
+      });
+      var ncExtent4326 = [-84.3219, 33.8429, -75.4606, 36.5881];
+      var ncExtent3857 = ol.proj.transformExtent(ncExtent4326, 'EPSG:4326', 'EPSG:3857');
+      map.getView().fit(ncExtent3857, {
+        size: map.getSize(),
+        padding: [30,30,30,30],
+        duration: 300
+      });
+    </script>
+  </body>
+</html>
 
