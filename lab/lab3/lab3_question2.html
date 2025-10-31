@@ -1,1 +1,66 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lab 3 Q2 - Azure Basemap Switching</title>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ol-layerswitcher@4.1.2/dist/ol-layerswitcher.js"></script>
+    <style>
+      .map {
+        width: 100%;
+        max-width: 900px;
+        height: 600px;
+        border: 1px solid #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Lab 3 - Question 2: Azure Basemap Switching</h3>
+    <h4>Author: Sophia Gerz-Escandón</h4>
+    <div id="map" class="map"></div>
+    <script>
+      var AZURE_KEY = '89F72x2UiHfGdjPAyeZyPPqCjPj86ftyQ3xuLyrYbOuJFv8HPfcDJQQJ99BJACYeBjFNMnj2AAAgAZMPqF4Y';
+      function azureTile(title, tilesetId, visible) {
+        return new ol.layer.Tile({
+          title: title,
+          type: 'base',
+          visible: visible,
+          source: new ol.source.XYZ({
+            url:
+              'https://atlas.microsoft.com/map/tile?api-version=2022-08-01' +
+              '&tilesetId=' + tilesetId + 
+              '&zoom={z}&x={x}&y={y}' +
+              '&subscription-key=' + AZURE_KEY,
+            crossOrigin: 'anonymous'
+          })
+        });
+      }
+      var azureRoad = azureTile('Azure Road', 'microsoft.base.road', true);
+      var azureDark = azureTile('Azure Dark Grey', 'microsoft.base.darkgrey', false);
+      var azureImagery = azureTile('Azure Imagery', 'microsoft.imagery', false);
+      var azureTerra = azureTile('Azure Terra', 'microsoft.terra.main', false);
+      var osm = new ol.layer.Tile({
+        title: 'OpenStreetMap',
+        type: 'base',
+        visible: false,
+        source: new ol.source.OSM()
+      });
+      var baseGroup = new ol.layer.Group({
+        title: 'Base Maps',
+        layers: [azureRoad, azureDark, azureImagery, azureTerra, osm]
+      });
+      var map = new ol.Map({
+        target: 'map',
+        layers: [baseGroup],
+        view: new ol.View({
+          projection: 'EPSG:3857',
+          center: ol.proj.fromLonLat([-79.0193, 35.7596]), // NC-ish center
+          zoom: 6
+        })
+      });
+      map.addControl(new ol.control.LayerSwitcher({ tipLabel: 'Switch Basemap' }));
+    </script>
+  </body>
+</html>
 
