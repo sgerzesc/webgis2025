@@ -3,26 +3,34 @@
 <head>
     <title>OpenLayers Basemap Switcher & WMS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
+    
     <style>
-        /* Basic styling for the map and controls */
+        /* Essential Styling for Map Visibility and Layout */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
-        /* Style the Canvas element which OpenLayers renders into */
+
+        /* 💡 CRITICAL: Map Container Dimensions */
+        /* The ol-viewport (inside the target div) needs defined dimensions (width/height) to render. */
         #map-canvas {
             width: 100%;
-            height: 600px; /* Set an appropriate height for the map */
+            height: 600px; /* Setting a fixed height is necessary for OpenLayers to draw the map */
+            background-color: #f0f0f0; /* Optional: a background color helps debugging */
         }
+        
+        /* Styling for the controls area */
         #controls {
             padding: 10px;
-            background-color: #f0f0f0;
+            background-color: #e6e6e6;
             border-bottom: 1px solid #ccc;
+            display: flex;
+            gap: 30px;
+            align-items: center;
         }
         .control-group {
-            margin-right: 20px;
-            display: inline-block;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -45,7 +53,7 @@
         </div>
     </div>
 
-    <canvas id="map-canvas"></canvas>
+    <div id="map-canvas"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
@@ -55,36 +63,32 @@
         const osmLayer = new ol.layer.Tile({
             source: new ol.source.OSM(),
             visible: true,
-            title: 'osm' // Used for layer identification
+            title: 'osm'
         });
 
-        // 2. ESRI Imagery Basemap
-        // Uses the ArcGIS REST service for World Imagery
+        // 2. ESRI Imagery Basemap (XYZ Source)
         const esriImageryLayer = new ol.layer.Tile({
             source: new ol.source.XYZ({
                 url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                 attributions: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer">ESRI</a>'
             }),
             visible: false,
-            title: 'esri' // Used for layer identification
+            title: 'esri'
         });
 
-        // 3. WMS Layer (US States)
+        // 3. WMS Layer (GeoServer topp:states)
         const wmsLayer = new ol.layer.Image({
             source: new ol.source.ImageWMS({
                 url: 'https://ahocevar.com/geoserver/wms',
                 params: {
                     'LAYERS': 'topp:states',
-                    'FORMAT': 'image/png', // Use png for transparency
+                    'FORMAT': 'image/png', // Use PNG for transparency
                     'VERSION': '1.1.1',
                     'TILED': false
                 },
-                // The provided BBOX/SRS were for a single GetMap request.
-                // OpenLayers handles the view extent and SRS (EPSG:3857) automatically.
-                // We request it in EPSG:4326/WGS84 for the WMS service, which is common.
                 serverType: 'geoserver'
             }),
-            opacity: 0.7, // Add a slight opacity for better basemap viewing
+            opacity: 0.7, 
             visible: true,
             title: 'wms'
         });
@@ -92,7 +96,7 @@
         // --- Map Initialization ---
 
         const map = new ol.Map({
-            // Set the Canvas element as the map's target
+            // Target the HTML element by its ID
             target: 'map-canvas', 
             layers: [
                 osmLayer,
@@ -100,9 +104,9 @@
                 wmsLayer // WMS on top of basemaps
             ],
             view: new ol.View({
-                // Center on Continental US (approx)
+                // Center on Continental US (approx -100 Longitude, 39 Latitude)
                 center: ol.proj.fromLonLat([-100, 39]), 
-                zoom: 4, // Appropriate zoom for continental US view
+                zoom: 4, // Appropriate zoom level
                 minZoom: 2,
                 maxZoom: 18
             })
@@ -110,22 +114,22 @@
 
         // --- Control Logic ---
 
-        // 1. Basemap Switcher Logic
+        // 1. Basemap Switcher Logic (Radio Buttons)
         const basemapRadios = document.getElementsByName('basemap');
         basemapRadios.forEach(radio => {
             radio.addEventListener('change', (event) => {
                 const selectedBasemap = event.target.value;
                 
-                // Set visibility based on the selected radio button
+                // Set visibility for both basemaps
                 osmLayer.setVisible(selectedBasemap === 'osm');
                 esriImageryLayer.setVisible(selectedBasemap === 'esri');
             });
         });
 
-        // 2. WMS Layer Toggle Logic
+        // 2. WMS Layer Toggle Logic (Checkbox)
         const wmsToggle = document.getElementById('wms-toggle');
         wmsToggle.addEventListener('change', (event) => {
-            // Set the WMS layer's visibility to the checked state of the checkbox
+            // Set the WMS layer's visibility based on the checked state
             wmsLayer.setVisible(event.target.checked);
         });
 
