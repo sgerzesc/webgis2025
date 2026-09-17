@@ -1,73 +1,49 @@
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Lab 2 for Web GIS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 2 for Web GIS</title>
 <style>
 html { height:100% }
 body { height:100%; margin:0; padding:0 }
-#map_canvas { height:60vh; width:100% }
+#map_canvas { height:50vh; width:50% }
 </style>
+
 <script
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs-UmSalhFptYJCxJOjshlBi0uOOQjfXk">
-</script>
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs-UmSalhFptYJCxJOjshlBi0uOOQjfXk"></script>
 <script>
-function initialize()
-{
-var latlng = new google.maps.LatLng(35.306840, -80.73200);
+function initialize() {
+var latlng = new google.maps.LatLng(35.306840, -80.732000);
 var myOptions = {
-zoom: 16,
-center: latlng,
-mapTypeId: google.maps.MapTypeId.HYBRID
-};
-new google.maps.Map(document.getElementById("map_canvas"),
-myOptions);
-}
-</script>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-html { height:100% }
-body { height:100%; margin:0; padding:0 }
-#map_canvas { height:60vh; width:100% }
-</style>
-<script
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGvt6G_qCyC8fz4BClDjyA9fCBKzU_Ifg">
-</script>
-<script>
-function initialize()
-{
-var latlng = new google.maps.LatLng(35.306840, -80.73200);
-var myOptions = {
-zoom: 16,
-center: latlng,
-mapTypeId: google.maps.MapTypeId.HYBRID
-};
-new google.maps.Map(document.getElementById("map_canvas"),
-myOptions);
+zoom:16,
+center:latlng,
+mapTypeId:google.maps.MapTypeId.HYBRID };
+new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
 </script>
 </head>
 <body onload="initialize()">
 <h1>Lab 2 for Web GIS</h1>
-<h3>Name: Sophia Gerz-Escandon</h3>
-<!-- Comments-->
-<h3>Current Date is: </h3>
+<h3>Name: Sophia Gerz-Escandón</h3>
+<h3>Current Date is:</h3>
 <script type="text/javascript">
 document.write(Date());
 </script>
-<h3>Generate a random number: </h3>
+<h3>Generate a random number:</h3>
 <script type="text/javascript">
 document.write(Math.random());
+</script>
+<h3>Define variables and perform calculation:</h3>
+<script>
+var str1 = "Hello World";
+document.write(str1);
 document.write("<br>");
-var str1="Hello World"; 
-document.write(str1); 
-var x=5;
-document.write(x);
-document.write("<br> ");
-var y=10;
-var z=x+y;
-document.write(z);
-document.write("<br> ");
+var x = 5;
+var y = 10;
+var z = x + y;
+document.write("x + y = " + z);
+document.write("<br><br>");
 </script>
 <h3>Define a function </h3>
 <script type="text/javascript">
@@ -79,7 +55,19 @@ return sum;
 var k=sum3(5,6,7);
 document.write(k);
 </script>
+<script>
+function sum3(x1, x2, x3) {
+var sum = x1 + x2 + x3;
+return sum;
+}
+8
+Geog4180/5180 Web GIS Fall 2025
+var k = sum3(5, 6, 7);
+document.write("sum3(5, 6, 7) = " + k);
+document.write("<br>");
+document.write("sum3(10, 20, 30) = " + sum3(10, 20, 30));
 </script>
+<h3>Interactive Map (Google Maps)</h3>
 <div id="map_canvas" style="width:50%; height:50%"></div>
 </body>
 </html>
