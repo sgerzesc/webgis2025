@@ -21,35 +21,42 @@ body { height:100%; margin:0; padding:20px; font-family: Arial, sans-serif; }
 
 <script>
 function initialize() {
-    // 1. Candler Park, Atlanta
+    // 1. Initial Interactive Map (Original Code)
+    new google.maps.Map(document.getElementById("map_canvas"), {
+        zoom: 16,
+        center: new google.maps.LatLng(35.306840, -80.732000),
+        mapTypeId: google.maps.MapTypeId.HYBRID
+    });
+
+    // 2. Candler Park, Atlanta
     new google.maps.Map(document.getElementById("map_candler_park"), {
         zoom: 15,
         center: new google.maps.LatLng(33.766870886063074, -84.3412533429238),
         mapTypeId: google.maps.MapTypeId.HYBRID
     });
 
-    // 2. Ipanema, Rio De Janeiro, Brazil
+    // 3. Ipanema, Rio De Janeiro, Brazil
     new google.maps.Map(document.getElementById("map_ipanema"), {
         zoom: 15,
         center: new google.maps.LatLng(-22.98672454568992, -43.20626783956588),
         mapTypeId: google.maps.MapTypeId.HYBRID
     });
 
-    // 3. PUC-Rio
+    // 4. PUC-Rio
     new google.maps.Map(document.getElementById("map_puc_rio"), {
         zoom: 16,
         center: new google.maps.LatLng(-22.979670378415797, -43.23322151348878),
         mapTypeId: google.maps.MapTypeId.HYBRID
     });
 
-    // 4. Provetá, Ilha Grande, Brazil
+    // 5. Provetá, Ilha Grande, Brazil
     new google.maps.Map(document.getElementById("map_proveta"), {
         zoom: 16,
         center: new google.maps.LatLng(-23.18071688762601, -44.34268103120761),
         mapTypeId: google.maps.MapTypeId.HYBRID
     });
 
-    // 5. Lençóis Maranhenses National Park, Maranhão, Brazil
+    // 6. Lençóis Maranhenses National Park, Maranhão, Brazil
     new google.maps.Map(document.getElementById("map_lencois"), {
         zoom: 14,
         center: new google.maps.LatLng(-2.532024066949896, -43.10564090311088),
@@ -106,6 +113,9 @@ document.write("sum3(10, 20, 30) = " + sum3(10, 20, 30));
 </script>
 
 <h2>Interactive Web Maps</h2>
+
+<h3>Interactive Map (Google Maps)</h3>
+<div id="map_canvas" class="map-container"></div>
 
 <h3>Map of Candler Park, Atlanta (hometown)</h3>
 <div id="map_candler_park" class="map-container"></div>
